@@ -15,8 +15,10 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Instalar Bandit
-      run: pip install bandit
+    - name: Instalar dependencias necesarias
+      run: |
+        pip install bandit
+        pip install requests  # 👈 Añadido
 
     - name: Ejecutar escaneo de vulnerabilidades
       run: bandit -r . -ll
