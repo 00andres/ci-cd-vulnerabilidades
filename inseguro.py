@@ -1,34 +1,47 @@
 import subprocess
 import requests
 import os
+import shlex
+from getpass import getpass
 
-#  credenciales embebidas (hardcoded)
-DB_PASSWORD = "admin123"  
 
-#  ejecución de comandos basada en input del usuario
+def obtener_password():
+    return getpass("Ingrese la contraseña de la base de datos: ")
+
+
 def ejecutar_comando_usuario():
-    comando = input("Ingresa un comando del sistema: ")
-    subprocess.call(comando, shell=True) 
+    comando = input("Comando permitido (solo 'ls' o 'dir'): ")
+    if comando in ['ls', 'dir']:
+        subprocess.call([comando])
+    else:
+        print("Comando no permitido.")
 
-# petición a HTTP inseguro
+
 def obtener_datos_externos():
-    response = requests.get("http://example.com/datos")  
-    print("Respuesta:", response.text)
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+        print("Respuesta:", response.text)
+    except requests.exceptions.RequestException as e:
+        print("Error al obtener datos:", e)
 
-#  lectura de archivo sin validación
+
 def leer_archivo_usuario():
     ruta = input("Ruta del archivo a leer: ")
-    with open(ruta, 'r') as f:
-        contenido = f.read()
-        print("Contenido:", contenido)
+    if os.path.exists(ruta) and os.path.isfile(ruta):
+        with open(ruta, 'r') as f:
+            contenido = f.read()
+            print("Contenido:", contenido)
+    else:
+        print("Archivo no encontrado.")
 
-# permisos excesivos
+
 def crear_archivo_privado():
     with open("secreto.txt", 'w') as f:
         f.write("información sensible")
-    os.chmod("secreto.txt", 0o777)  
+    os.chmod("secreto.txt", 0o600)  
 
 
+password = obtener_password()
 ejecutar_comando_usuario()
 obtener_datos_externos()
 leer_archivo_usuario()
